@@ -116,6 +116,7 @@
 
 ## <a name="todo"></a>🌊 TODO
 - [x] Release code
+- [x] Release quantitative metrics （👾The quantitative metrics for ResULIC presented in our paper can be found in [indicator](/indicator).）
 - [ ] Release pretrained models (Coming soon)
 
 ## <a name="acknowledgement">❤ Acknowledgement
