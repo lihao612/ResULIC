@@ -16,7 +16,7 @@ params:
   monitor: val/loss_simple_ema
   scale_factor: 0.18215
   use_ema: False
-  sync_path: /workspace/test/DiffEIC/logs2/1_1_1_add_xs_100_eps_ddim/lightning_logs/version_0/checkpoints/step=299999.ckpt #/workspace/test/DiffEIC/logs/1_2_8/lightning_logs/version_0/checkpoints/step=29999.ckpt  path to the StableDiffusion v 2.1 weights
+  sync_path:  # path to the StableDiffusion v 2.1 weights
   synch_control: true
   pred_x_start: True
   ckpt_path_pre: ~

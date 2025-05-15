@@ -16,7 +16,7 @@ params:
   monitor: val/loss_simple_ema
   scale_factor: 0.18215
   use_ema: False
-  sync_path: /workspace/test/checkpoint/ori_models/v2-1_512-ema-pruned.ckpt #/workspace/test/DiffEIC/logs/1_2_8/lightning_logs/version_0/checkpoints/step=29999.ckpt  path to the StableDiffusion v 2.1 weights
+  sync_path:  #path to the StableDiffusion v 2.1 weights
   synch_control: true
   ckpt_path_pre: ~
   
@@ -31,7 +31,7 @@ params:
   l_bpp_weight: 1.0
   
   control_stage_config:
-    target: model.cldm_zc_xs.CDDM
+    target: model.cldm_zc_xs_eps_ddim.CDDM
     params:
       use_checkpoint: True
       image_size: 32 # unused
