@@ -56,6 +56,7 @@ def create_cdf_from_frequencies(char_freq, sequence_length):
     cdf = cdf.view(1, 1, -1).expand(1, sequence_length, -1)
     
     return cdf, unique_chars
+    
 def arithmetic_encode(indices_list):
     """
     使用数字和逗号频率进行算术编码
