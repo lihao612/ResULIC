@@ -114,8 +114,6 @@ params:
       out_nc: 4
       N: 128
       M: 192
-      prior_nc: 64
-      sft_ks: 3
       slice_num: 5
       slice_ch: [16, 16, 32, 32, 96]
       

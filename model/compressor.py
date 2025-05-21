@@ -10,36 +10,14 @@ from model.layers import *
 # from thop import profile
     
 class Encoder(nn.Module):
-    def __init__(self, in_nc, mid_nc, out_nc, prior_nc, sft_ks):
+    def __init__(self, in_nc, mid_nc, out_nc):
         super().__init__()
-
-        # self.sft_1_8 = nn.Sequential(
-        #     conv3x3(4, prior_nc, stride=2),
-        #     nn.GELU(),
-        #     conv1x1(prior_nc, prior_nc)
-        # )
-
-        # self.sft_1_16 = nn.Sequential(
-        #     conv3x3(prior_nc, prior_nc, stride=2),
-        #     nn.GELU(),
-        #     conv1x1(prior_nc, prior_nc)
-        # )
-
-        # self.sft_1_16_2 = nn.Sequential(
-        #     conv3x3(prior_nc, prior_nc),
-        #     nn.GELU(),
-        #     conv1x1(prior_nc, prior_nc)
-        # )
 
         self.g_a1 = nn.Sequential(
             ResidualBlockWithStride(in_nc, mid_nc[2]),
             ResidualBottleneck(mid_nc[2]),
             ResidualBottleneck(mid_nc[2]),
             ResidualBottleneck(mid_nc[2]),
-            # ResidualBlockWithStride(mid_nc[1], mid_nc[1], stride=1),
-            # ResidualBottleneck(mid_nc[1]),
-            # ResidualBottleneck(mid_nc[1]),
-            # ResidualBottleneck(mid_nc[1]),
             ResidualBlockWithStride(mid_nc[2], mid_nc[2]),
             ResidualBottleneck(mid_nc[2]),
             ResidualBottleneck(mid_nc[2]),
@@ -47,42 +25,13 @@ class Encoder(nn.Module):
             conv3x3(mid_nc[2], out_nc)
         )
 
-        # self.g_a1_ref = SFT(mid_nc[2], prior_nc, ks=sft_ks)
-
-        # self.g_a2  = nn.Sequential(
-        #     ResidualBlockWithStride(mid_nc[1], mid_nc[2]),
-        #     ResidualBottleneck(mid_nc[2]),
-        #     ResidualBottleneck(mid_nc[2]),
-        #     ResidualBottleneck(mid_nc[2]),
-        # )
-        # self.g_a2_ref = SFT(mid_nc[3], prior_nc, ks=sft_ks)
-
-
-        # self.g_a3 = conv3x3(mid_nc[3],mid_nc[3])
-        # self.g_a4 = SFTResblk(mid_nc[3], prior_nc, ks=sft_ks)
-        # self.g_a5 = SFTResblk(mid_nc[3], prior_nc, ks=sft_ks)
-
-        # self.g_a6 = conv3x3(mid_nc[3], out_nc)
-
     def forward(self, x):
-        # sft_feature = self.sft_1_8(feature)
         x = self.g_a1(x)
-        # x = self.g_a1_ref(x, sft_feature)
-
-        # sft_feature = self.sft_1_16(sft_feature)
-        # x = self.g_a2(x)
-        # x = self.g_a2_ref(x, sft_feature)
-
-        # sft_feature = self.sft_1_16_2(sft_feature)
-        # x = self.g_a3(x)
-        # x = self.g_a4(x, sft_feature)
-        # x = self.g_a5(x, sft_feature)
-        # x = self.g_a6(x)
 
         return x
     
 class Decoder(nn.Module):
-    def __init__(self, N, M, out_nc, prior_nc, sft_ks):
+    def __init__(self, N, M, out_nc):
         super().__init__()
 
 
@@ -106,12 +55,11 @@ class Decoder(nn.Module):
         return x
     
 class HyperEncoder(nn.Module):
-    def __init__(self, N, M, prior_nc, sft_ks):
+    def __init__(self, N, M):
         super().__init__()
     
         self.h_a = nn.Sequential(
             conv3x3(M, N),
-            # DepthwiseConvBlockPrior(N),
             nn.GELU(),
             conv(N, N),
             nn.GELU(),
@@ -170,16 +118,16 @@ class EntropyParametersEX(nn.Module):
         return gaussian_params
 
 class ELIC(CompressionModel):
-    def __init__(self, in_nc, out_nc, enc_mid, N, M, prior_nc, sft_ks, slice_num, slice_ch):
+    def __init__(self, in_nc, out_nc, enc_mid, N, M, slice_num, slice_ch):
         super().__init__()
 
         self.slice_num = slice_num
         self.slice_ch = slice_ch
 
-        self.encoder = Encoder(in_nc, enc_mid, M, prior_nc, sft_ks)
-        self.hyper_enc = HyperEncoder(N, M, prior_nc, sft_ks)
+        self.encoder = Encoder(in_nc, enc_mid, M)
+        self.hyper_enc = HyperEncoder(N, M)
         self.hyper_dec = HyperDecoder(N, M)
-        self.decoder = Decoder(N, M, out_nc, prior_nc, sft_ks)
+        self.decoder = Decoder(N, M, out_nc)
 
         self.f_c = nn.Sequential(
             deconv(N, N//2),
