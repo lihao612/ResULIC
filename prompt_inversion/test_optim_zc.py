@@ -128,7 +128,7 @@ def initialize_prompt(tokenizer, token_embedding, opt, device, initial_prompt_te
 
     if initial_prompt_text is not None:
         # Encode the specified initial prompt text
-        initial_prompt_text = re.sub(r'[^\w\s]', ' ', initial_prompt_text)
+        initial_prompt_text = re.sub(r'[^\w\s]', '', initial_prompt_text)
         prompt_ids = tokenizer.encode(initial_prompt_text)
         # Convert prompt_ids to tensor and move to device
         prompt_ids = torch.tensor([prompt_ids], device=device)
@@ -222,8 +222,6 @@ def optimize_prompt_loop(model, diffusion, preprocess, tokenizer, token_embeddin
 
     for step in range(opt_iters):
         with torch.cuda.amp.autocast():
-        # forward projection
-        # projected_embeds, projected_embeds2, nn_indices, nn_indices2 = nn_project(prompt_embeds, token_embedding, tokenizer, compress_features)
         
             projected_embeds, nn_indices = nn_project(prompt_embeds, token_embedding, tokenizer)
 
@@ -231,15 +229,9 @@ def optimize_prompt_loop(model, diffusion, preprocess, tokenizer, token_embeddin
             tmp_embeds = prompt_embeds.detach().clone()
             tmp_embeds.data = projected_embeds.data
             tmp_embeds.requires_grad = True
-            #prompt_embeds = projected_embeds.data
-            #prompt_embeds.requires_grad = True
-            # padding and repeat
-            #padded_embeds = copy.deepcopy(dummy_embeds)
-            # padded_embeds = dummy_embeds.detach().clone()
+            
             padded_embeds2 = dummy_embeds.detach().clone()
-            # padded_embeds[:, 1:prompt_len+1] = tmp_embeds#
-            # padded_embeds = padded_embeds.repeat(opt.batch_size, 1, 1)
-            # padded_dummy_ids = dummy_ids.repeat(opt.batch_size, 1)
+           
             padded_embeds2[dummy_ids == -1] = tmp_embeds.reshape(-1, p_dim)
             
             logits_per_image, logits_per_text, text_embeddings = model.forward_text_embedding(padded_embeds2, dummy_ids, all_target_features)
@@ -259,9 +251,7 @@ def optimize_prompt_loop(model, diffusion, preprocess, tokenizer, token_embeddin
             
             cond = {"c_latent": [compressed_img], "c_crossattn": [text_embeddings]}
 
-            # torch.manual_seed(42)
             noise = torch.randn_like(x)
-            # with torch.no_grad():
             x_noisy = diffusion.q_sample(x_start=x, t=timesteps, z_c=compressed_img, noise=noise)
             model_output = diffusion.apply_model(x_noisy, timesteps, cond)
             # pred_x0 = diffusion.predict_start_from_noise(x_noisy, t=timesteps, z_c=compressed_img, noise=model_output)
@@ -297,7 +287,6 @@ def optimize_prompt_loop(model, diffusion, preprocess, tokenizer, token_embeddin
                 with diffusion.ema_scope():
                     torch.manual_seed(opt.seed)
                     diffusion.eval()
-                    diffusion.control_scales =  ([1] * 13)
 
                     x_samples = sampler.decode(latent_x, cond_i, unconditional_guidance_scale=opt.scale,
                                                     unconditional_conditioning=uc)
