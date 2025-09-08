@@ -106,9 +106,9 @@
     --add_steps x00
     ```
 
-<!-- 3. W/ Srr, W/ Pfo.
+3. W/ Srr, W/ Pfo.
    ```
-    CUDA_VISIBLE_DEVICES=2 python inference_zc.py \
+    CUDA_VISIBLE_DEVICES=2 python inference_res_pfo.py \
     --ckpt xx \
     --config /xx/xx.yaml \
     --output xx/ \
@@ -116,7 +116,7 @@
     --ddim_eta 0 \
     --Q x.0 \
     --add_steps x00
-    ``` -->
+    ```
 
 ## <a name="todo"></a>🌊 TODO
 - [x] Release code
