@@ -1,7 +1,7 @@
 
 #torch==2.0.1
 xformers==0.0.22
-compressai==1.2.6 强制pip使用当前环境
+compressai==1.2.6 
 einops
 kornia
 lpips
