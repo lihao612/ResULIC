@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 class MyDataset(Dataset):
     def __init__(self, transform=None):
         self.data = []
-        with open('/workspace/test/ProSrc/data/LSDIR/prompt1.json', 'rt') as f:
+        with open('dataset/prompt_lsdir.json', 'rt') as f:
             self.data = json.load(f)
         self.transform = transform
 
@@ -21,7 +21,7 @@ class MyDataset(Dataset):
         item = self.data[idx]
 
         #source_filename = item['source']
-        target_filename = item['target']
+        target_filename = item['target'].lstrip('/')
         prompt = item['prompt']
         if random.random() < 0.3:
             prompt = ""

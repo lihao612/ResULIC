@@ -8,7 +8,7 @@ from PIL import Image
 import io
 
 client = OpenAI(
-    api_key= "**",
+    api_key=os.getenv("DASHSCOPE_API_KEY"),
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
 # original_caption = 'The image shows a riverside scene during the golden hour with a focus on a twin-spired church in the background. In front of the church, there are several historic buildings. The river in the foreground reflects the buildings and the sky. There is a boat with four people rowing on the river, and another boat can be seen in the distance. The sky is partly cloudy, with the sunlight casting a warm glow on the scene.'
@@ -57,7 +57,7 @@ def get_image_caption(image):
         messages=[
                 {"role": "system", "content": "You are a helpful assistant"},
                 {"role": "user","content": [
-                {"type": "text","text": "Please describe this picture in detail with 100 words. Do not provide any description about feelings."},
+                {"type": "text","text": "Please describe this picture in detail with 40 words. Do not provide any description about feelings."},
                 {"type": "image_url",
                  "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
                 ]}],
@@ -86,7 +86,20 @@ def get_residual_caption(original_caption, compressed_caption):
     json_data = json.loads(completion.model_dump_json())
     return json_data['choices'][0]['message']['content']
 
+if __name__ == '__main__':
+    LOCAL_IMAGE_PATH = "kodim03.png"
 
+    caption_result = get_image_caption(LOCAL_IMAGE_PATH)
+
+    print("\n--- 结果 ---")
+    if caption_result.startswith("❌") or caption_result.startswith("ERROR"):
+        print("调用失败。")
+        print(caption_result)
+    else:
+        print("✅ 成功获取描述！")
+        print("模型描述:")
+        print(caption_result)
+    print("-" * 50)
 # from http import HTTPStatus
 # import os
 # import dashscope

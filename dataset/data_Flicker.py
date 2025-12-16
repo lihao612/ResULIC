@@ -7,7 +7,7 @@ import random
 class MyDataset2(Dataset):
     def __init__(self, transform=None):
 
-        with open('/workspace/test/ProSrc/data/flicker/prompt.json', 'r') as f:
+        with open('dataset/prompt_flicker.json', 'r') as f:
             self.data = json.load(f)
         
         self.image_paths = list(self.data.keys())
@@ -21,7 +21,7 @@ class MyDataset2(Dataset):
 
     def __getitem__(self, idx):
 
-        image_path = self.image_paths[idx]
+        image_path = self.image_paths[idx].lstrip('/')
         prompt = self.prompts[idx]
 
         if random.random() < 0.3:

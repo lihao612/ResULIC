@@ -1,7 +1,7 @@
 
 model:
   # You can set learning rate in the following configuration file.
-  config: xx/cldm_eps/1_1_3/cldm_eps_200_ddpm.yaml
+  config: configs/model/stage1/1_1_3/cldm_eps_200_ddim.yaml
   # Path to the checkpoints or weights you want to resume. At the begining, 
   resume: ~
 
@@ -14,7 +14,7 @@ lightning:
     # Indices of GPUs used for training.
     gpus: [0]
     # Path to save logs and checkpoints.
-    default_root_dir: ./logs2/1_1_3_add_xs_200_eps_ddpm
+    default_root_dir: ./logs1/1_1_3_add_xs_200_eps_ddpm
     # Max number of training steps (batches).
     max_steps: 100001
     # Validation frequency in terms of training steps.

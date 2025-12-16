@@ -176,7 +176,7 @@ def parse_args() -> Namespace:
     parser.add_argument("--sampler", type=str, default="ddim", choices=["ddpm", "ddim"])
     # parser.add_argument("--steps", default=30, type=int)
     parser.add_argument("--scale", default=2.5, type=int)
-    parser.add_argument("--excel", type=str, default='/workspace/test/ProSrc/kodak_caption/kodak_blip.xlsx', help="Path to Excel file containing prompts")
+    #parser.add_argument("--excel", type=str, default='/workspace/test/ProSrc/kodak_caption/kodak_blip.xlsx', help="Path to Excel file containing prompts")
     parser.add_argument("--output", type=str, default='results_win_res_15/', help="Path to save results")
     parser.add_argument("--ddim_steps",type=int,default=3,help="number of ddim sampling steps",)
     parser.add_argument("--ddim_eta",type=float,default=0.0,help="ddim eta (eta=0.0 corresponds to deterministic sampling",)

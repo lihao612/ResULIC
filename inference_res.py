@@ -152,12 +152,12 @@ def parse_args() -> Namespace:
     parser.add_argument("--ckpt", default='**', type=str, help="Full checkpoint path")
     parser.add_argument("--config", default='**', type=str, help="Model config path")
     parser.add_argument("--json_file_path", type=str, default="**.json")
-    parser.add_argument("--input", type=str, default= '/workspace/test/PRO2.0/Kodak', help="Path to input images")
+    parser.add_argument("--input", type=str, default= 'data/test/kodak/image', help="Path to input images")
     parser.add_argument("--sampler", type=str, default="ddim", choices=["ddpm", "ddim"])
     # parser.add_argument("--steps", default=30, type=int)
     parser.add_argument("--scale", default=2.5, type=int)
-    parser.add_argument("--excel", type=str, default='/workspace/test/ProSrc/kodak_caption/kodak_blip.xlsx', help="Path to Excel file containing prompts")
-    parser.add_argument("--output", type=str, default='results_win_res_15/', help="Path to save results")
+    #parser.add_argument("--excel", type=str, default='/workspace/test/ProSrc/kodak_caption/kodak_blip.xlsx', help="Path to Excel file containing prompts")
+    parser.add_argument("--output", type=str, default='output/kodak', help="Path to save results")
     parser.add_argument("--ddim_steps",type=int,default=3,help="number of ddim sampling steps",)
     parser.add_argument("--ddim_eta",type=float,default=0.0,help="ddim eta (eta=0.0 corresponds to deterministic sampling",)
     parser.add_argument("--seed", type=int, default=42)
@@ -204,14 +204,16 @@ def main() -> None:
     msssim_scores = []
     msssim_scores_res = []
     img_results = [] 
-    df = pd.read_excel(args.excel)
+    # df = pd.read_excel(args.excel)
     assert os.path.isdir(args.input)
     print(f"Sampling {args.ddim_steps} steps using {args.sampler} sampler")
     # args_clip = Namespace()
 
+    sys.exit()
+
     for i in range(24):
         file_name = f'kodim{str(i+1).zfill(2)}.png'
-        file_path = os.path.join('/workspace/test/ProSrc/Kodak', file_name)
+        file_path = os.path.join('data/test/kodak/image', file_name)
 
         img = Image.open(file_path).convert("RGB")
         x = pad(np.array(img), scale=64)
