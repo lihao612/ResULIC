@@ -9,7 +9,7 @@ from dataset.data_Flicker import MyDataset2
 from torch.utils.data import ConcatDataset, DataLoader
 from utils.common import instantiate_from_config, load_state_dict
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '4,5'
+os.environ['CUDA_VISIBLE_DEVICES'] = '1,2'
 def main() -> None:
     parser = ArgumentParser()
     parser.add_argument("--config", type=str, default='./configs/train_stage2.yaml')
@@ -44,7 +44,7 @@ def main() -> None:
     model = instantiate_from_config(OmegaConf.load(config.model.config))
     # TODO: resume states saved in checkpoint.
     if config.model.get("resume"):
-        load_state_dict(model, torch.load(config.model.resume, map_location="cuda"), strict=True)
+        load_state_dict(model, torch.load(config.model.resume, map_location="cuda"), strict=False)
     
     callbacks = []
     for callback_config in config.lightning.callbacks:

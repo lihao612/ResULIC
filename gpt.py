@@ -47,7 +47,7 @@ def get_image_caption(image):
         messages=[
                 {"role": "system", "content": "You are a helpful assistant"},
                 {"role": "user","content": [
-                {"type": "text","text": "Please describe this picture in detail with 10 words. Do not provide any description about feelings."},
+                {"type": "text","text": "Please describe this picture in detail with 40 words. Do not provide any description about feelings."},
                 {"type": "image_url",
                  "image_url": {"url": f"data:{mime_type};base64,{base64_image}"}}
                 ]}],

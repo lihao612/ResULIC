@@ -5,7 +5,7 @@ from typing import List, Tuple
 import os
 import pandas as pd
 from argparse import ArgumentParser, Namespace
-os.environ['CUDA_VISIBLE_DEVICES'] = '2'
+#os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 import numpy as np
 import torch
 import einops
@@ -151,7 +151,7 @@ def process(model, imgs, args, sampler, stream_path, prompt, clip_model, clip_pr
     
     if args.pfo:
         if best_rec is not None:
-            best_rec_img = torch.clamp((best_rec + 1.0) / 2.0, min=0.0, max=1.0)
+            best_rec_img = torch.clamp(best_rec, min=0.0, max=1.0)
             best_rec_img = (einops.rearrange(best_rec_img, "b c h w -> b h w c") * 255).cpu().numpy().clip(0, 255).astype(np.uint8)
             best_rec_preds = [best_rec_img[i] for i in range(n_samples)]
         else:
@@ -186,6 +186,16 @@ def parse_args() -> Namespace:
     parser.add_argument("--add_steps",type=int,default=300,help="")
     parser.add_argument("--type",type=str,default="lpips")
     parser.add_argument("--pfo", action="store_true", help="Enable Prompt Fidelity Optimization")
+
+    parser.add_argument("--clip-pretrain",type=str,default="laion2b_s32b_b79k")
+    parser.add_argument("--clip-model",type=str,default="ViT-H-14")
+    parser.add_argument("--iter",type=int,default=500)
+    parser.add_argument("--lr",type=int,default=0.3)
+    parser.add_argument("--prompt-bs",type=int,default=1)
+    parser.add_argument("--weight-decay",type=int,default=0.1)
+    parser.add_argument("--loss-weight",type=int,default=0.1)
+    parser.add_argument("--loss-diffusion",type=int,default=1)
+    parser.add_argument("--eval-step",type=int,default=50)
 
     return parser.parse_args()
 
@@ -234,17 +244,17 @@ def main() -> None:
     img_results = [] 
 
     clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(args.clip_model, 
-                                                                            pretrained=args.clip_pretrain, 
+                                                                            pretrained="weight/open_clip_pytorch_model.bin", 
                                                                             device=model.device)
     
-    df = pd.read_excel(args.excel)
+    #df = pd.read_excel(args.excel)
     assert os.path.isdir(args.input)
     print(f"Sampling {args.ddim_steps} steps using {args.sampler} sampler")
     # args_clip = Namespace()
 
     for i in range(24):
         file_name = f'kodim{str(i+1).zfill(2)}.png'
-        file_path = os.path.join('/workspace/test/ProSrc/Kodak', file_name)
+        file_path = os.path.join('data/test/kodak/image', file_name)
 
         img = Image.open(file_path).convert("RGB")
         x = pad(np.array(img), scale=64)
@@ -362,6 +372,7 @@ def main() -> None:
         img_results.append(image_metrics)
         
         print(f"Saved to {save_path}, bpp: {bpp}, text_bpp:{text_bpp}, total_bpp:{total_bpp}, LPIPS: {lpips_score}, PSNR: {psnr_score}, MS-SSIM: {msssim_score}")
+        print(f"LPIPS_loss_pfo: {lpips_score_pfo}, MS-SSIM_pfo:{msssim_score_pfo}, PSNR_pfo:{psnr_score_pfo}")
 
     # Calculate averages
     avg_bpp = sum(bpps) / len(bpps)

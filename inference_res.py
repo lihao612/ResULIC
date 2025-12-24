@@ -4,7 +4,7 @@ from typing import List, Tuple
 import os
 import pandas as pd
 from argparse import ArgumentParser, Namespace
-os.environ['CUDA_VISIBLE_DEVICES'] = '2'
+#os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 import numpy as np
 import torch
 import einops
@@ -208,8 +208,6 @@ def main() -> None:
     assert os.path.isdir(args.input)
     print(f"Sampling {args.ddim_steps} steps using {args.sampler} sampler")
     # args_clip = Namespace()
-
-    sys.exit()
 
     for i in range(24):
         file_name = f'kodim{str(i+1).zfill(2)}.png'

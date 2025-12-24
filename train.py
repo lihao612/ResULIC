@@ -40,7 +40,7 @@ def main() -> None:
     dataset2 = MyDataset2(train_transforms)
 
     dataset_con = ConcatDataset([dataset, dataset2])
-    dataloader = DataLoader(dataset_con, num_workers=4, batch_size=args.batch_size, shuffle=True)
+    dataloader = DataLoader(dataset_con, num_workers=4, batch_size=args.batch_size, shuffle=True,drop_last=True)
 
     model = instantiate_from_config(OmegaConf.load(config.model.config))
     # TODO: resume states saved in checkpoint.
